@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AtStrategy, RtStrategy } from "./strategy";
 import { usersProviders } from "src/user/user.provider";
 import { MongoDbModule } from "src/database/database.module";
+import { EmailService } from "src/email.service";
 
 @Module({
     imports: [MongoDbModule,
@@ -14,10 +15,8 @@ import { MongoDbModule } from "src/database/database.module";
       }),
     JwtModule.register({
         global: true,
-        // secret: process.env.SECRET_KEY,
-        // signOptions: { expiresIn: '15m' },
       }),],
     controllers:[AuthController],
-    providers:[AuthService,RtStrategy,AtStrategy,...usersProviders]
+    providers:[AuthService,EmailService,RtStrategy,AtStrategy,...usersProviders]
 })
 export class AuthModule { }

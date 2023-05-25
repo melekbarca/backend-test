@@ -19,7 +19,7 @@ export class VideoService {
         return video
     }
 
-    async getVideo(id: string) {
+    async getVideo(id: string): Promise<Video> {
         const video = await this.videoModel.findOne({ _id: id })
         if (!video)
             throw new NotFoundException()
@@ -36,7 +36,7 @@ export class VideoService {
 
     }
 
-    async like(videoId: string, userId: string) {
+    async like(videoId: string, userId: string): Promise<Video> {
 
         const video = await this.videoModel.findOneAndUpdate(
             { _id: videoId },
@@ -50,7 +50,7 @@ export class VideoService {
 
 
     }
-    async dislike(videoId: string, userId: string) {
+    async dislike(videoId: string, userId: string): Promise<Video> {
 
         const video = await this.videoModel.findOneAndUpdate(
             { _id: videoId },
@@ -65,7 +65,7 @@ export class VideoService {
 
     }
 
-    async editVideo(videoDto: VideoDto, videoId: string, userId: string) {
+    async editVideo(videoDto: VideoDto, videoId: string, userId: string):Promise<Video> {
 
         const video = await this.videoModel.findById(videoId)
         if (!video || video.userId.toString() !== userId.toString())
@@ -76,28 +76,24 @@ export class VideoService {
             { ...videoDto },
             { new: true })
 
-        return {
-            status: 200,
-            data: editedVideo,
-        }
+        return editedVideo
     }
-
     async deleteVideo(videoId: string, userId: string) {
-        const video = await this.videoModel.findById(videoId)
+            const video = await this.videoModel.findById(videoId)
+                  
+            if (video.isDeleted===true || video.userId.toString() !== userId.toString())
+                throw new ForbiddenException("Access to ressources denied")
 
-        if (!video || video.userId.toString() !== userId.toString())
-            throw new ForbiddenException("Access to ressources denied")
+            await this.videoModel.updateOne(
+                { _id: videoId },
+                { $set: { isDeleted: true } }
+            )
 
-        await this.videoModel.updateOne(
-            { _id: videoId },
-            { $set: { isDeleted: true } }
-        )
-
-        return {
-            status:200,
-            message:"deleted"
+            return {
+                status: 200,
+                message: "deleted"
+            }
         }
+
+
     }
-
-
-}

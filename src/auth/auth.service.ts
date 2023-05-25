@@ -7,11 +7,14 @@ import { LoginDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt/dist";
 import { User_Model } from "src/config";
 import { AuthPayload, Tokens } from "./types";
+import { EmailService } from "src/email.service";
+import { confirmMailText } from "./emailText";
 @Injectable({})
 export class AuthService {
     constructor(
         @Inject(User_Model) private userModel: Model<User>,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private emailService:EmailService
     ) { }
 
     async signup(dto: AuthDto): Promise<User> {
@@ -19,6 +22,7 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(dto.password, 8)
         const newUser = new this.userModel({ ...dto, password: hashPassword })
         const user = await this.userModel.create(newUser)
+         await this.emailService.sendMail(dto.email,'verification mail',confirmMailText) 
         return user
 
     }
