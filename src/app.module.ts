@@ -8,13 +8,14 @@ import { VideoModule } from './video/video.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal:true
+      isGlobal: true
     }),
     MongoDbModule,
     AuthModule,
     UserModule,
     VideoModule
   ],
+  
 
 })
 export class AppModule { }
