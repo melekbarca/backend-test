@@ -15,7 +15,7 @@ export class UserService {
     ) { }
 
     async updateUser(id: string, updateUserDto: UpdateUserDto):Promise<User> {
-
+          
         const user = await this.userModel.findById(id)
         if (!user)
             throw new NotFoundException('user not found')
@@ -26,7 +26,7 @@ export class UserService {
             throw new ForbiddenException("credentials not valid")
 
         const newHashPassword = await bcrypt.hash(updateUserDto.newPassword, 8)
-        delete updateUserDto.newPassword
+        
         const updatedUser = await this.userModel.findOneAndUpdate(
             { _id: id },
             { ...updateUserDto, password: newHashPassword }

@@ -22,7 +22,7 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(dto.password, 8)
         const newUser = new this.userModel({ ...dto, password: hashPassword })
         const user = await this.userModel.create(newUser)
-         await this.emailService.sendMail(dto.email,'verification mail',confirmMailText) 
+        //  await this.emailService.sendMail(dto.email,'verification mail',confirmMailText) 
         return user
 
     }

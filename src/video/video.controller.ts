@@ -1,10 +1,11 @@
-import { Controller, UseGuards, Post, Delete, Get, Put, Body, Param, UseFilters } from '@nestjs/common'
+import { Controller, UseGuards, Post, Delete, Get, Put, Body, Param, UseFilters, Query } from '@nestjs/common'
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard, RolesGuard } from 'src/auth/guard';
 import { VideoService } from './video.service';
 import { VideoDto } from './dto';
 import { ParseObjectIdPipe } from 'src/database/pipes/parse-objectId.pipe';
 import { MongoExceptionFilter } from 'src/database/mongoErrorFilter/mongo.errorFilter';
+import { FilterQueryDto } from './dto/filterQuery.dto';
 
 @UseGuards(JwtGuard)
 @Controller("video")
@@ -59,6 +60,14 @@ export class VideoContoller {
     delete(@Param('videoId', new ParseObjectIdPipe()) videoId: string, @GetUser('_id') userId: string) {
         return this.videoService.deleteVideo(videoId, userId)
     }
+
+    @Get('filter')
+    @UseGuards(RolesGuard)
+    filterVideos(@Query() query:FilterQueryDto) {
+        return this.videoService.filter(query)
+    }
+
+
 
 
 }

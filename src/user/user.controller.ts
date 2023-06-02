@@ -13,7 +13,7 @@ export class UserController {
     constructor(private userService: UserService) { }
 
     @Get('find')
-    @Roles('Admin')
+    @Roles('user')
     @UseGuards(RolesGuard)
     getUser(@GetUser() user:User) {
         return user
